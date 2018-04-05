@@ -67,19 +67,21 @@ class App extends Component {
     super();
     this.state = {
       upc: '',
+      zip: '',
       storePrices: [],
       product: {name: '', sku: '', upc: ''},
       progress: ''
     }
 
     this.handleChange = this.handleChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
     this.searchStores = this.searchStores.bind(this);
   }
 
   searchStores = async (upc, zip) => {
     let lowPrice = 9999;
 
-    if (zip) {
+    if (zip && zip.length === 5) {
       allStores = await walmart.stores.byZip(zip);
     };
 
@@ -129,19 +131,21 @@ class App extends Component {
   }
 
   handleChange(event) {
-    this.setState({
-      upc: event.target.value,
-      storePrices: []
-    });
+    this.setState({[event.target.name]: event.target.value});
+  }
+
+  handleSubmit(event) {
     if (this.state.upc.length > 5) {
-      this.searchStores(this.state.upc, null);
+      this.setState({storePrices: []});
+      this.searchStores(this.state.upc, this.state.zip);
     }
+    event.preventDefault();
   }
 
   componentWillMount() {
-    if (this.state.upc.length > 5) {
+    /*if (this.state.upc.length > 5) {
       this.searchStores(this.state.upc, null);
-    }
+    }*/
 
   }
   render() {
@@ -151,28 +155,40 @@ class App extends Component {
 
       <div className = "Entry" >
       <div>
-      UPC: <input type = "text" value={this.state.upc} onChange={this.handleChange}/>
+      <form onSubmit={this.handleSubmit}>
+        <label>
+        UPC: <input type = "text" name="upc" value={this.state.upc} onChange={this.handleChange}/>
+        </label>
+        <label>
+        ZIP: <input type = "text" name="zip" value={this.state.zip} onChange={this.handleChange}/>
+        </label>
+        <input type="submit" value="Submit" />
+      </form>
+
       <div>{this.state.progress} </div>
-      <div width="100%">
-        {
-          Object.keys(this.state.product).map(key =>
-            <div key={key}>
-              <div width="200px">{key}</div><div>{this.state.product[key]}</div>
-            </div>
-          )
-        }
-      </div>
-      <table border = "1px" >
+          <div width="100%">
+          <div>Walmart: <a href={this.state.product.url}>{this.state.product.name}</a></div>
+          <div>Brickseek: <a href={this.state.product.bsUrl}>{this.state.product.sku}</a></div>
+          <div>UPC: {this.state.product.upc}</div>
+          </div>
+
+
+      <table border = "1px solid" align="center">
+
       <tbody>
+      <tr>
+      <th>Store #</th><th>Address</th><th>ZIP</th><th>Price</th><th>Stock</th>
+      </tr>
+
       {
         this.state.storePrices.map(storePrice =>
 
           <tr key={storePrice.no}>
             <td>{storePrice.no}</td>
-            <td>{storePrice.price}</td>
-            <td>{storePrice.stock}</td>
             <td>{storePrice.address}</td>
             <td>{storePrice.zip}</td>
+            <td>{storePrice.price}</td>
+            <td>{storePrice.stock}</td>
           </tr>
         )
       }
