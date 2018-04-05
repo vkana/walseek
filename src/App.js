@@ -8,7 +8,7 @@ const secrets = require('./secrets.json');
 const apiKey = secrets.apiKey;
 const walmart = require('walmart')(apiKey);
 
-let allStores = stores.allStores.slice(0,40);
+let allStores = stores.allStores;
 let failedStores = [];
 
 const getUPC = async (sku) => {
