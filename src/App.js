@@ -115,7 +115,7 @@ class App extends Component {
               zip = priceObj.zip;
               let storePrices = this.state.storePrices;
               storePrices.unshift(priceObj);
-              this.setState({storePrices: storePrices});
+              this.setState({storePrices: storePrices.slice(0,25)});
               lowPrice = priceObj.price;
             }
           });
@@ -190,7 +190,7 @@ class App extends Component {
         this.state.storePrices.map(storePrice =>
 
           <tr key={storePrice.no}>
-            <td>{storePrice.no}</td>
+            <td><a target="_blank" href={`https://www.walmart.com/store/${storePrice.no}/search?query=${this.state.product.sku}`}>{storePrice.no}</a></td>
             <td>{storePrice.address}</td>
             <td>{storePrice.zip}</td>
             <td>{storePrice.price}</td>
@@ -200,7 +200,7 @@ class App extends Component {
       }
       </tbody>
       </table>
-
+      <br/>
       </div>
 
       </div>
