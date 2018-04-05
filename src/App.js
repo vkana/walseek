@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import './App.css';
-import logo from './logo.svg';
+//import logo from './logo.svg';
 const axios = require('axios');
 const stores = require('./stores.json');
 //===============
@@ -8,12 +8,12 @@ const secrets = require('./secrets.json');
 const apiKey = secrets.apiKey;
 const walmart = require('walmart')(apiKey);
 
-let allStores = stores.allStores;
+let allStores = stores.allStores.slice(0,40);
 let failedStores = [];
 
 const getUPC = async (sku) => {
   const apiKey = secrets.apiKey;
-  const url = `http://api.walmartlabs.com/v1/items/${sku}?apiKey=${apiKey}`;
+  const url = `https://cors-anywhere.herokuapp.com/http://api.walmartlabs.com/v1/items/${sku}?apiKey=${apiKey}`;
   let resp = await axios.get(url);
   return resp.data.upc;
 };
@@ -70,7 +70,7 @@ class App extends Component {
       zip: '',
       storePrices: [],
       product: {name: '', sku: '', upc: ''},
-      progress: ''
+      progress: 0
     }
 
     this.handleChange = this.handleChange.bind(this);
@@ -99,7 +99,7 @@ class App extends Component {
       promiseArray.push(getStorePricePromise(upc, storeId));
 
       if ((i % concurrent === 0 || i === storeCount - 1)) {
-        this.setState({progress: 'Searching ' + i + ' of ' + storeCount});
+        this.setState({progress: (i * 100/ storeCount)});
         try {
           let results = await Promise.all(promiseArray);
           if (!product) {
@@ -126,8 +126,8 @@ class App extends Component {
         }
       }
     }
-    this.setState({progress: 'Done. Skipped ' + failedStores.length + ' stores'});
-    document.getElementById('progressIcon').class = 'App-logo-paused';
+    //this.setState({progress: 'Done. Skipped ' + failedStores.length + ' stores'});
+    this.setState({progress: 100});
   }
 
   handleChange(event) {
@@ -150,30 +150,36 @@ class App extends Component {
   }
   render() {
     return ( <div className = "App" >
-      <img src={logo} className="App-logo" id="progressIcon" alt="logo" />
-
-
       <div className = "Entry" >
       <div>
+      <div>
+      <h3>Walmart nationwide price search </h3>
+      Enter SKU or UPC. Search may take 3-5 minutes.
+      </div><br/>
       <form onSubmit={this.handleSubmit}>
         <label>
-        UPC: <input type = "text" name="upc" value={this.state.upc} onChange={this.handleChange}/>
+        SKU or UPC: <input type = "text" name="upc" value={this.state.upc} onChange={this.handleChange}/>
         </label>
-        <label>
+        <label style={{display:"none"}}>
         ZIP: <input type = "text" name="zip" value={this.state.zip} onChange={this.handleChange}/>
         </label>
         <input type="submit" value="Submit" />
       </form>
 
-      <div>{this.state.progress} </div>
-          <div width="100%">
-          <div>Walmart: <a href={this.state.product.url}>{this.state.product.name}</a></div>
-          <div>Brickseek: <a href={this.state.product.bsUrl}>{this.state.product.sku}</a></div>
+      <div id="progressbar">
+      <div id="progress" style={{width:`${this.state.progress}%`}}>{this.state.progress === 100 ? 'Done!': ''}</div>
+      </div>
+      <br/>
+
+
+          <div>
+          <div>Walmart: <a target="_blank" href={this.state.product.url}>{this.state.product.name}</a></div>
+          <div>Brickseek: <a target="_blank" href={this.state.product.bsUrl}>{this.state.product.sku}</a></div>
           <div>UPC: {this.state.product.upc}</div>
           </div>
 
-
-      <table border = "1px solid" align="center">
+<br/>
+      <table align="center">
 
       <tbody>
       <tr>
