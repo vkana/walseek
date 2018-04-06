@@ -52,5 +52,6 @@ table, tr, td, th {
 }
 
 body {
-  font-family: open sans, sans-serif;
+  font-family: sans-serif;
+  font-size: small;
 }

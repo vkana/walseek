@@ -135,6 +135,7 @@ class App extends Component {
   }
 
   handleSubmit(event) {
+    this.setState({product: {}})
     if (this.state.upc.length > 5) {
       this.setState({storePrices: []});
       this.searchStores(this.state.upc, this.state.zip);
@@ -149,11 +150,15 @@ class App extends Component {
 
   }
   render() {
+
+    const tableDisplay = (this.state.storePrices.length > 0 )?'table-row':'none';
+    const productDisplay = (this.state.product && this.state.product.sku)? 'block': 'none';
+
     return ( <div className = "App" >
       <div className = "Entry" >
       <div>
       <div>
-      <h3>Walmart nationwide price search </h3>
+      <h2>Walmart nationwide low price search </h2>
       Enter SKU or UPC. Search may take 3-5 minutes.
       </div><br/>
       <form onSubmit={this.handleSubmit}>
@@ -172,20 +177,21 @@ class App extends Component {
       <br/>
 
 
-          <div>
+          <div style={{display:productDisplay}}>
           <div>Walmart: <a target="_blank" href={this.state.product.url}>{this.state.product.name}</a></div>
           <div>Brickseek: <a target="_blank" href={this.state.product.bsUrl}>{this.state.product.sku}</a></div>
-          <div>UPC: {this.state.product.upc}</div>
+          <div>UPC Barcode:<a target="_blank" href={`http://barcode.live/?upc=${this.state.product.upc}`}> {this.state.product.upc}</a></div>
+          <div>Sold: {this.state.product.available}</div>
           </div>
 
 <br/>
       <table align="center">
 
       <tbody>
-      <tr>
+
+      <tr style={{display: tableDisplay}}>
       <th>Store #</th><th>Address</th><th>ZIP</th><th>Price</th><th>Stock</th>
       </tr>
-
       {
         this.state.storePrices.map(storePrice =>
 
