@@ -12,7 +12,7 @@ let allStores = stores.allStores;
 let failedStores = [];
 
 const saveSearch = async (product) => {
-  let url = 'http://walseek-rest.herokuapp.com/products';
+  let url = 'https://walseek-rest.herokuapp.com/products';
   //let url = 'http://localhost:3001/products';
   await axios.post(url, product);
 }
@@ -87,7 +87,7 @@ class App extends Component {
   }
 
   searchHistory = async () => {
-    let url = 'http://walseek-rest.herokuapp.com/products';
+    let url = 'https://walseek-rest.herokuapp.com/products';
     //let url = 'http://localhost:3001/products';
     let searches = [];
     axios.get(url).then(response => {
