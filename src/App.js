@@ -134,6 +134,7 @@ class App extends Component {
     }
     //this.setState({progress: 'Done. Skipped ' + failedStores.length + ' stores'});
     product.zip = zip;
+    product.price = lowPrice;
     saveResults(product);
     this.setState({progress: 100});
   }
