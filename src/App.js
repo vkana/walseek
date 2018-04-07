@@ -11,6 +11,12 @@ const walmart = require('walmart')(apiKey);
 let allStores = stores.allStores;
 let failedStores = [];
 
+const saveResults = async (product) => {
+  let url = 'http://walseek-rest.herokuapp.com/products';
+  //let url = 'http://localhost:3001/products';
+  let response = await axios.post(url, product);
+  console.log('rest response', response);
+}
 const getUPC = async (sku) => {
   const apiKey = secrets.apiKey;
   const url = `https://cors-anywhere.herokuapp.com/http://api.walmartlabs.com/v1/items/${sku}?apiKey=${apiKey}`;
@@ -127,6 +133,8 @@ class App extends Component {
       }
     }
     //this.setState({progress: 'Done. Skipped ' + failedStores.length + ' stores'});
+    product.zip = zip;
+    saveResults(product);
     this.setState({progress: 100});
   }
 
