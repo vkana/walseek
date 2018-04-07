@@ -11,12 +11,12 @@ const walmart = require('walmart')(apiKey);
 let allStores = stores.allStores;
 let failedStores = [];
 
-const saveResults = async (product) => {
+const saveSearch = async (product) => {
   let url = 'http://walseek-rest.herokuapp.com/products';
   //let url = 'http://localhost:3001/products';
-  let response = await axios.post(url, product);
-  console.log('rest response', response);
+  await axios.post(url, product);
 }
+
 const getUPC = async (sku) => {
   const apiKey = secrets.apiKey;
   const url = `https://cors-anywhere.herokuapp.com/http://api.walmartlabs.com/v1/items/${sku}?apiKey=${apiKey}`;
@@ -76,12 +76,30 @@ class App extends Component {
       zip: '',
       storePrices: [],
       product: {name: '', sku: '', upc: ''},
-      progress: 0
+      progress: 0,
+      searches: []
     }
 
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.searchStores = this.searchStores.bind(this);
+    this.searchHistory = this.searchHistory.bind(this);
+  }
+
+  searchHistory = async () => {
+    let url = 'http://walseek-rest.herokuapp.com/products';
+    //let url = 'http://localhost:3001/products';
+    let searches = [];
+    axios.get(url).then(response => {
+      if (response && response.data) {
+        searches = response.data.sort((a,b) => {return Date.parse(a.createdDate) < Date.parse(b.createdDate)});
+      }
+      searches.map(s => {delete s.createdDate; delete s._id; delete s.__v});
+      this.setState({searches: searches.slice(0,50)});
+    })
+    .catch(e => {
+      console.log('Cannot get recent searches');
+    });
   }
 
   searchStores = async (upc, zip) => {
@@ -135,7 +153,7 @@ class App extends Component {
     //this.setState({progress: 'Done. Skipped ' + failedStores.length + ' stores'});
     product.zip = zip;
     product.price = lowPrice;
-    saveResults(product);
+    saveSearch(product);
     this.setState({progress: 100});
   }
 
@@ -152,14 +170,10 @@ class App extends Component {
     event.preventDefault();
   }
 
-  componentWillMount() {
-    /*if (this.state.upc.length > 5) {
-      this.searchStores(this.state.upc, null);
-    }*/
-
+  componentDidMount() {
+    this.searchHistory();
   }
   render() {
-
     const tableDisplay = (this.state.storePrices.length > 0 )?'table-row':'none';
     const productDisplay = (this.state.product && this.state.product.sku)? 'block': 'none';
 
@@ -216,6 +230,25 @@ class App extends Component {
       </tbody>
       </table>
       <br/>
+      <div>
+      Recent searches: <br/>
+      <table align="center">
+        <tbody>
+          <tr><th>Name</th><th>SKU</th><th>Price</th><th>ZIP</th></tr>
+
+        {
+          this.state.searches.map((s,idx) =>
+            <tr key={idx}>
+              <td>{s.name}</td>
+              <td>{s.sku}</td>
+              <td>{s.price}</td>
+              <td>{s.zip}</td>
+            </tr>
+          )
+        }
+        </tbody>
+      </table>
+      </div>
       </div>
 
       </div>
