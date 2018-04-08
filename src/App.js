@@ -19,7 +19,7 @@ const saveSearch = async (product) => {
 
 const getUPC = async (sku) => {
   const apiKey = secrets.apiKey;
-  const url = `https://cors-anywhere.herokuapp.com/http://api.walmartlabs.com/v1/items/${sku}?apiKey=${apiKey}`;
+  const url = `https://cors-anywhere.herokuapp.com/https://api.walmartlabs.com/v1/items/${sku}?apiKey=${apiKey}`;
   let resp = await axios.get(url);
   return resp.data.upc;
 };
@@ -55,7 +55,9 @@ const productDetails = (result) => {
 const getStore = storeId => {return allStores.filter(st => st.no === storeId)[0]};
 
 const getStorePricePromise = (upc, storeId) => {
-  let url = `https://search.mobile.walmart.com/v1/products-by-code/UPC/${upc}`;
+  let protocols = ['http','https'];
+  let protocol = protocols[Math.floor(Math.random() * 2)];
+  let url = `${protocol}://search.mobile.walmart.com/v1/products-by-code/UPC/${upc}`;
   return axios.get(url, {
     params: {
       storeId: storeId
