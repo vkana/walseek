@@ -55,9 +55,8 @@ const productDetails = (result) => {
 const getStore = storeId => {return allStores.filter(st => st.no === storeId)[0]};
 
 const getStorePricePromise = (upc, storeId) => {
-  let protocols = ['http','https'];
-  let protocol = protocols[Math.floor(Math.random() * 2)];
-  let url = `${protocol}://search.mobile.walmart.com/v1/products-by-code/UPC/${upc}`;
+
+  let url = `https://search.mobile.walmart.com/v1/products-by-code/UPC/${upc}`;
   return axios.get(url, {
     params: {
       storeId: storeId
@@ -116,6 +115,10 @@ class App extends Component {
 
     if (upc.length < 12) {
       upc = await getUPC(upc);
+    }
+    if (!upc) {
+      console.log('UPC not found');
+      return;
     }
     const storeCount = allStores.length;
     let promiseArray = [];
