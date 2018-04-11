@@ -8,6 +8,8 @@ const secrets = require('./secrets.json');
 const apiKey = secrets.apiKey;
 const walmart = require('walmart')(apiKey);
 
+const queryString = require('query-string');
+
 let allStores = stores.allStores;
 let failedStores = [];
 
@@ -172,10 +174,21 @@ class App extends Component {
       this.setState({storePrices: []});
       this.searchStores(this.state.upc, this.state.zip);
     }
-    event.preventDefault();
+    if (event) {
+      event.preventDefault();
+    }
   }
 
   componentDidMount() {
+    //eslint-disable-next-line
+    let upc = queryString.parseUrl(location.href).query.item;
+    if (upc) {
+      this.setState({upc});
+      setTimeout(() => {
+        this.handleSubmit();
+      }, 1000 / 60);
+    }
+
     this.searchHistory();
   }
   render() {
@@ -187,7 +200,8 @@ class App extends Component {
       <div>
       <div>
       <h2>Walmart nationwide low price search</h2>
-      Enter SKU or UPC. Search may take 3-5 minutes.
+      Enter SKU or UPC. Search may take 1-3 minutes.
+      *One search at a time. No multi-tab search please!*
       </div><br/>
       <form onSubmit={this.handleSubmit}>
         <label>
