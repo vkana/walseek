@@ -11,10 +11,10 @@ const walmart = require('walmart')(apiKey);
 let allStores = stores.allStores;
 let failedStores = [];
 
-const saveSearch = async (product) => {
+const saveSearch = (product) => {
   let url = 'https://walseek-rest.herokuapp.com/products';
   //let url = 'http://localhost:3001/products';
-  await axios.post(url, product);
+  axios.post(url, product).catch(e => console.log('save search failed'));
 }
 
 const getUPC = async (sku) => {
@@ -76,7 +76,7 @@ class App extends Component {
       upc: '',
       zip: '',
       storePrices: [],
-      product: {name: '', sku: '', upc: ''},
+      product: {},
       progress: 0,
       searches: []
     }
@@ -104,62 +104,62 @@ class App extends Component {
   }
 
   searchStores = async (upc, zip) => {
-    let lowPrice = 9999;
-
+    let [numStores, storeCount, lowPrice, lowZip] = [100, 4683, 9999, 0];
+    //storeCount = allStores.length;
     if (zip && zip.length === 5) {
       allStores = await walmart.stores.byZip(zip);
     };
 
-    let concurrent = 500;
-    let product = null;
-
     if (upc.length < 12) {
       upc = await getUPC(upc);
     }
+
     if (!upc) {
       console.log('UPC not found');
       return;
     }
-    const storeCount = allStores.length;
-    let promiseArray = [];
 
-    for (let i = 0; i < storeCount; i++) {
-      let storeId = allStores[i].no;
-      promiseArray.push(getStorePricePromise(upc, storeId));
-
-      if ((i % concurrent === 0 || i === storeCount - 1)) {
-        this.setState({progress: (i * 100/ storeCount)});
-        try {
-          let results = await Promise.all(promiseArray);
-          if (!product) {
-            product = productDetails(results[0]);
-            this.setState({product: product});
-          };
-          results.map(r => {
-            let priceObj = getPrice(r);
-            if (priceObj.no !== 0 && (priceObj.price <= lowPrice || allStores.length < 100)) {
-              let store = getStore(priceObj.no);
-              priceObj.zip = '00000'.concat(store.zip).substr(-5);
-              priceObj.address = store.address || store.streetAddress;
-              zip = priceObj.zip;
-              let storePrices = this.state.storePrices;
-              storePrices.unshift(priceObj);
-              this.setState({storePrices: storePrices.slice(0,25)});
-              lowPrice = priceObj.price;
-            }
-          });
-          promiseArray = [];
-
-        } catch (e) {
-          console.log('errored', e.code || (e.response ? e.response.status : '') || e);
+    for (let i = 0; i< storeCount; i = i + numStores) {
+      let url = `https://walseek-rest.herokuapp.com/stores-by-code/${upc}`;
+      //let url = `http://localhost:3001/stores-by-code/${upc}`;
+      axios.get(url, {
+        params: {
+          start: i,
+          stores: numStores
         }
-      }
+      })
+      .then(resp => {
+        if (resp.data.item && resp.data.item.sku && !this.state.product.sku) {
+          this.setState({product: resp.data.item});
+        }
+
+        let storePrices = this.state.storePrices;
+        resp.data.storePrices.map(s => {
+          if (s.price <= lowPrice){
+          storePrices.unshift(s);
+          [lowPrice, lowZip] = [s.price, s.zip];
+        }
+        });
+
+        this.setState({storePrices: storePrices.slice(0,25)});
+        let progress = Math.min(100, this.state.progress + numStores * 100 /storeCount);
+        this.setState({progress});
+        if (progress === 100) {
+          let product = (({ name, sku}) => ({name, sku}))(this.state.product);
+          product = {...product, price:lowPrice, zip: '00000'.concat(lowZip).slice(-5)};
+          saveSearch(product);
+        }
+      })
+      .catch (e => {
+        console.log('errored', e);
+      })
     }
+
     //this.setState({progress: 'Done. Skipped ' + failedStores.length + ' stores'});
-    product.zip = zip;
-    product.price = lowPrice;
-    saveSearch(product);
-    this.setState({progress: 100});
+    //product.zip = zip;
+    //product.price = lowPrice;
+    //saveSearch(product);
+    //this.setState({progress: 100});
   }
 
   handleChange(event) {
@@ -167,7 +167,7 @@ class App extends Component {
   }
 
   handleSubmit(event) {
-    this.setState({product: {}})
+    this.setState({progress: 0, product: {}})
     if (this.state.upc.length > 5) {
       this.setState({storePrices: []});
       this.searchStores(this.state.upc, this.state.zip);
@@ -186,7 +186,7 @@ class App extends Component {
       <div className = "Entry" >
       <div>
       <div>
-      <h2>Walmart nationwide low price search </h2>
+      <h2>Walmart nationwide low price search</h2>
       Enter SKU or UPC. Search may take 3-5 minutes.
       </div><br/>
       <form onSubmit={this.handleSubmit}>
@@ -200,7 +200,7 @@ class App extends Component {
       </form>
 
       <div id="progressbar">
-      <div id="progress" style={{width:`${this.state.progress}%`}}>{this.state.progress === 100 ? 'Done!': ''}</div>
+      <div id="progress" style={{width:`${this.state.progress}%`}}>{this.state.progress >= 100 ? 'Done!': ''}</div>
       </div>
       <br/>
 
@@ -209,7 +209,7 @@ class App extends Component {
           <div>Walmart: <a target="_blank" href={this.state.product.url}>{this.state.product.name}</a></div>
           <div>Brickseek: <a target="_blank" href={this.state.product.bsUrl}>{this.state.product.sku}</a></div>
           <div>UPC Barcode:<a target="_blank" href={`http://barcode.live/?upc=${this.state.product.upc}`}> {this.state.product.upc}</a></div>
-          <div>Sold: {this.state.product.available}</div>
+          <div>Sold: {this.state.product.offerType}</div>
           </div>
 
 <br/>
