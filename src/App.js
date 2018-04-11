@@ -88,15 +88,15 @@ class App extends Component {
   }
 
   searchHistory = async () => {
-    let url = 'https://walseek-rest.herokuapp.com/products';
+    let url = 'https://walseek-rest.herokuapp.com/products?count=50';
     //let url = 'http://localhost:3001/products';
     let searches = [];
     axios.get(url).then(response => {
       if (response && response.data) {
-        searches = response.data.sort((a,b) => {return Date.parse(a.createdDate) < Date.parse(b.createdDate)});
+        searches = response.data;
       }
       searches.map(s => {delete s.createdDate; delete s._id; delete s.__v});
-      this.setState({searches: searches.slice(0,50)});
+      this.setState({searches});
     })
     .catch(e => {
       console.log('Cannot get recent searches');
@@ -167,8 +167,8 @@ class App extends Component {
   }
 
   handleSubmit(event) {
-    this.setState({progress: 0, product: {}})
-    if (this.state.upc.length > 5) {
+    this.setState({progress: 1, product: {}})
+    if (this.state.upc.length > 3) {
       this.setState({storePrices: []});
       this.searchStores(this.state.upc, this.state.zip);
     }
@@ -196,7 +196,7 @@ class App extends Component {
         <label style={{display:"none"}}>
         ZIP: <input type = "text" name="zip" value={this.state.zip} onChange={this.handleChange}/>
         </label>
-        <input type="submit" value="Submit" />
+        <input disabled={this.state.progress > 0 && this.state.progress < 100} type="submit" value="Submit" />
       </form>
 
       <div id="progressbar">
