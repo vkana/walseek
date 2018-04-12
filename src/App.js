@@ -182,7 +182,9 @@ class App extends Component {
   componentDidMount() {
     //eslint-disable-next-line
     let upc = queryString.parseUrl(location.href).query.item;
+
     if (upc) {
+      upc= upc.slice(-12);
       this.setState({upc});
       setTimeout(() => {
         this.handleSubmit();
