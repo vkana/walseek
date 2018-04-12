@@ -13,6 +13,10 @@ const queryString = require('query-string');
 let allStores = stores.allStores;
 let failedStores = [];
 
+const randomApiDomain = () => {
+  let domains = ['walseek-rest.herokuapp.com', 'walseek-rest-1.herokuapp.com', 'walseek-rest-2.herokuapp.com'];
+  return domains[Math.floor(Math.random()*domains.length)];
+}
 const saveSearch = (product) => {
   let url = 'https://walseek-rest.herokuapp.com/products';
   //let url = 'http://localhost:3001/products';
@@ -120,9 +124,11 @@ class App extends Component {
       console.log('UPC not found');
       return;
     }
+    let progress = 0;
 
     for (let i = 0; i< storeCount; i = i + numStores) {
-      let url = `https://walseek-rest.herokuapp.com/stores-by-code/${upc}`;
+      let domain = randomApiDomain();
+      let url = `https://${domain}/stores-by-code/${upc}`;
       //let url = `http://localhost:3001/stores-by-code/${upc}`;
       axios.get(url, {
         params: {
@@ -144,7 +150,7 @@ class App extends Component {
         });
 
         this.setState({storePrices: storePrices.slice(0,25)});
-        let progress = Math.min(100, this.state.progress + numStores * 100 /storeCount);
+        progress = Math.min(100, this.state.progress + numStores * 100 /storeCount);
         this.setState({progress});
         if (progress === 100) {
           let product = (({ name, sku}) => ({name, sku}))(this.state.product);
@@ -153,15 +159,13 @@ class App extends Component {
         }
       })
       .catch (e => {
-        console.log('errored', e);
+        progress = Math.min(100, this.state.progress + numStores * 100 /storeCount);
+        this.setState({progress});
+
+        console.log('errored', progress, e);
       })
     }
 
-    //this.setState({progress: 'Done. Skipped ' + failedStores.length + ' stores'});
-    //product.zip = zip;
-    //product.price = lowPrice;
-    //saveSearch(product);
-    //this.setState({progress: 100});
   }
 
   handleChange(event) {
@@ -184,8 +188,7 @@ class App extends Component {
     let upc = queryString.parseUrl(location.href).query.item;
 
     if (upc) {
-      upc= upc.slice(-12);
-      this.setState({upc});
+      this.setState({upc: upc.slice(-12)});
       setTimeout(() => {
         this.handleSubmit();
       }, 1000 / 60);
