@@ -84,13 +84,15 @@ class App extends Component {
       storePrices: [],
       product: {},
       progress: 0,
-      searches: []
+      searches: [],
+      showInstructions: false
     }
 
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.searchStores = this.searchStores.bind(this);
     this.searchHistory = this.searchHistory.bind(this);
+    this.toggleInstructions = this.toggleInstructions.bind(this);
   }
 
   searchHistory = async () => {
@@ -107,6 +109,10 @@ class App extends Component {
     .catch(e => {
       console.log('Cannot get recent searches');
     });
+  }
+
+  toggleInstructions = () => {
+    this.setState({showInstructions: !this.state.showInstructions});
   }
 
   searchStores = async (upc, zip) => {
@@ -207,6 +213,21 @@ class App extends Component {
       <h2>Walmart nationwide low price search</h2>
       Enter SKU or UPC. Search may take 1-3 minutes.
       *One search at a time. No multi-tab search please!*
+      <br/>
+      <button onClick={this.toggleInstructions.bind(this)}>Instructions to use it with a barcode app</button>
+
+      <div style={{textAlign:"left", marginLeft: "40%", display: this.state.showInstructions?"block":"none"}}>
+        It's handy when you're at a store and want to know the lowest price.
+        <ul>
+          <li><a target="_blank" rel="noopener noreferrer" href="https://itunes.apple.com/us/app/barcode/id522354642">Install this iOS Barcode app</a></li>
+          <li>Settings (Bottom right gear icon) -> Custom URL</li>
+          <li>Prefix: https://vkana.github.io/walseek?item= </li>
+          <li>Name: Walseek (or whatever)</li>
+          <li><a target="_blank" rel="noopener noreferrer" href="https://play.google.com/store/apps/details?id=com.google.zxing.client.android">Similar app and setup for Android</a></li>
+          <li>Goto app and scan a barcode, select Walseek!</li>
+        </ul>
+
+      </div>
       </div><br/>
       <form onSubmit={this.handleSubmit}>
         <label>
@@ -225,9 +246,9 @@ class App extends Component {
 
 
           <div style={{display:productDisplay}}>
-          <div>Walmart: <a target="_blank" href={this.state.product.url}>{this.state.product.name}</a></div>
-          <div>Brickseek: <a target="_blank" href={this.state.product.bsUrl}>{this.state.product.sku}</a></div>
-          <div>UPC Barcode:<a target="_blank" href={`http://barcode.live/?upc=${this.state.product.upc}`}> {this.state.product.upc}</a></div>
+          <div>Walmart: <a target="_blank" rel="noopener noreferrer" href={this.state.product.url}>{this.state.product.name}</a></div>
+          <div>Brickseek: <a target="_blank" rel="noopener noreferrer" href={this.state.product.bsUrl}>{this.state.product.sku}</a></div>
+          <div>UPC Barcode:<a target="_blank" rel="noopener noreferrer" href={`http://barcode.live/?upc=${this.state.product.upc}`}> {this.state.product.upc}</a></div>
           <div>Sold: {this.state.product.offerType}</div>
           </div>
 
@@ -243,7 +264,7 @@ class App extends Component {
         this.state.storePrices.map(storePrice =>
 
           <tr key={storePrice.no}>
-            <td><a target="_blank" href={`https://www.walmart.com/store/${storePrice.no}/search?query=${this.state.product.sku}`}>{storePrice.no}</a></td>
+            <td><a target="_blank" rel="noopener noreferrer" href={`https://www.walmart.com/store/${storePrice.no}/search?query=${this.state.product.sku}`}>{storePrice.no}</a></td>
             <td>{storePrice.address}</td>
             <td>{storePrice.zip}</td>
             <td>{storePrice.price}</td>
