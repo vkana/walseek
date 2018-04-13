@@ -55,3 +55,7 @@ body {
   font-family: sans-serif;
   font-size: small;
 }
+
+.alternate tr:nth-child(odd) {
+  background-color: #eee;
+}

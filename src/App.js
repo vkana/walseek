@@ -269,7 +269,7 @@ class App extends Component {
       {
         this.state.storePrices.map(storePrice =>
 
-          <tr key={storePrice.no}>
+          <tr key={storePrice.no} className="alternate">
             <td><a target="_blank" rel="noopener noreferrer" href={`https://www.walmart.com/store/${storePrice.no}/search?query=${this.state.product.sku}`}>{storePrice.no}</a></td>
             <td>{storePrice.address}</td>
             <td>{storePrice.zip}</td>
@@ -282,8 +282,8 @@ class App extends Component {
       </table>
       <br/>
       <div>
-      Recent searches: <br/>
-      <table style={{textAlign: "left"}}>
+      <h3>Recent searches</h3>
+      <table className="alternate" align="center" style={{textAlign: "left"}}>
         <tbody>
           <tr><th>SKU</th><th>Name</th><th>Price</th><th>Address</th></tr>
           {
@@ -298,6 +298,7 @@ class App extends Component {
           }
         </tbody>
       </table>
+      <br/>
       </div>
       </div>
 
