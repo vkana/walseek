@@ -103,7 +103,13 @@ class App extends Component {
       if (response && response.data) {
         searches = response.data;
       }
-      searches.map(s => {delete s.createdDate; delete s._id; delete s.__v});
+      searches = searches.map(s => {
+        let store = allStores.filter(store => store.zip === s.zip)[0];
+        delete s.createdDate;
+        delete s._id;
+        delete s.__v;
+        return {...s, storeId: store.no, address: store.address};
+      });
       this.setState({searches});
     })
     .catch(e => {
@@ -277,20 +283,19 @@ class App extends Component {
       <br/>
       <div>
       Recent searches: <br/>
-      <table align="center">
+      <table style={{textAlign: "left"}}>
         <tbody>
-          <tr><th>Name</th><th>SKU</th><th>Price</th><th>ZIP</th></tr>
-
-        {
-          this.state.searches.map((s,idx) =>
-            <tr key={idx}>
-              <td>{s.name}</td>
-              <td>{s.sku}</td>
-              <td>{s.price}</td>
-              <td>{s.zip}</td>
-            </tr>
-          )
-        }
+          <tr><th>SKU</th><th>Name</th><th>Price</th><th>Address</th></tr>
+          {
+            this.state.searches.map((s,idx) =>
+              <tr key={idx}>
+                <td width="10%">{s.sku}</td>
+                <td width="55%">{s.name}</td>
+                <td width="10%">{s.price}</td>
+                <td width="25%">#{s.storeId}, {s.address} {s.zip}</td>
+              </tr>
+            )
+          }
         </tbody>
       </table>
       </div>
