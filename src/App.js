@@ -139,8 +139,7 @@ class App extends Component {
     let progress = 0;
 
     for (let i = 0; i< storeCount; i = i + numStores) {
-      let domain = randomApiDomain();
-      let url = `https://${domain}/stores-by-code/${upc}`;
+      let url = `https://${randomApiDomain()}/stores-by-code/${upc}`;
       //let url = `http://localhost:3001/stores-by-code/${upc}`;
       axios.get(url, {
         params: {
@@ -167,7 +166,9 @@ class App extends Component {
         if (progress === 100) {
           let product = (({ name, sku}) => ({name, sku}))(this.state.product);
           product = {...product, price:lowPrice, zip: '00000'.concat(lowZip).slice(-5)};
-          saveSearch(product);
+          if (product && product.sku) {
+            saveSearch(product);
+          }
         }
       })
       .catch (e => {
