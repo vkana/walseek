@@ -48,6 +48,8 @@ table, tr, td, th {
    background-color: #bbb;
    /*width: 40%;  Adjust with JavaScript */
    height: 20px;
+   padding-left: 0px !important;
+   padding-right: 0px !important;
    /*border-radius: 10px;*/
 }
 
@@ -58,4 +60,20 @@ body {
 
 .alternate tr:nth-child(odd) {
   background-color: #eee;
+}
+
+.right-text {
+  text-align: right;
+}
+
+.left-text {
+  text-align: left;
+}
+
+div, td, th {
+  padding-left: 5px;
+  padding-right: 5px;
+  padding-top: 2px;
+  padding-bottom: 2px;
+
 }

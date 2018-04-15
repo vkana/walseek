@@ -17,6 +17,9 @@ const randomApiDomain = () => {
   let domains = ['walseek-rest.herokuapp.com', 'walseek-rest-1.herokuapp.com', 'walseek-rest-2.herokuapp.com'];
   return domains[Math.floor(Math.random()*domains.length)];
 }
+const formatCurrency = (num) => {
+  return '$' + Number.parseFloat(num).toFixed(2);
+}
 const saveSearch = (product) => {
   let url = 'https://walseek-rest.herokuapp.com/products';
   //let url = 'http://localhost:3001/products';
@@ -265,16 +268,17 @@ class App extends Component {
       <tbody>
 
       <tr style={{display: tableDisplay}}>
-      <th>Store #</th><th>Address</th><th>ZIP</th><th>Price</th><th>Stock</th>
+      <th>Store #</th><th>Address</th><th>ZIP</th><th className="right">Price</th><th>Stock</th>
       </tr>
       {
         this.state.storePrices.map(storePrice =>
 
           <tr key={storePrice.no} className="alternate">
-            <td><a target="_blank" rel="noopener noreferrer" href={`https://www.walmart.com/store/${storePrice.no}/search?query=${this.state.product.sku}`}>{storePrice.no}</a></td>
+            <td><a target="_blank" rel="noopener noreferrer"
+                href={`https://www.walmart.com/store/${storePrice.no}/search?query=${this.state.product.sku}`}>{storePrice.no}</a></td>
             <td>{storePrice.address}</td>
             <td>{storePrice.zip}</td>
-            <td>{storePrice.price}</td>
+            <td className="right">{formatCurrency(storePrice.price)}</td>
             <td>{storePrice.stock}</td>
           </tr>
         )
@@ -284,15 +288,18 @@ class App extends Component {
       <br/>
       <div>
       <h3>Recent searches</h3>
-      <table className="alternate" align="center" style={{textAlign: "left"}}>
+      <table className="alternate left-text" align="center" width="95%">
         <tbody>
-          <tr><th>SKU</th><th>Name</th><th>Price</th><th>Address</th></tr>
+          <tr><th>SKU</th><th>Name</th><th className="right-text">Price</th><th>Address</th></tr>
           {
             this.state.searches.map((s,idx) =>
               <tr key={idx}>
-                <td width="10%">{s.sku}</td>
-                <td width="55%">{s.name}</td>
-                <td width="10%">{s.price}</td>
+                <td width="10%"> <a target="_blank" rel="noopener noreferrer" href={`https://www.brickseek.com/walmart-inventory-checker?sku=${s.sku}`}>{s.sku}</a></td>
+                <td width="55%">
+                  {s.name} <a target="_blank" rel="noopener noreferrer" href={`https://www.walmart.com/store/${s.storeId}/search?query=${s.sku}`}>&#8599;</a>
+                  &nbsp;<a target="_blank" rel="noopener noreferrer" href={`https://www.walmart.com/ip/${s.sku}`}>&#8594;</a>
+                </td>
+                <td width="10%" className="right-text">{formatCurrency(s.price)}</td>
                 <td width="25%">#{s.storeId}, {s.address} {s.zip}</td>
               </tr>
             )
@@ -302,7 +309,6 @@ class App extends Component {
       <br/>
       </div>
       </div>
-
       </div>
       </div>
     );
