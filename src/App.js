@@ -116,7 +116,7 @@ class App extends Component {
       this.setState({searches});
     })
     .catch(e => {
-      console.log('Cannot get recent searches');
+      console.log('Cannot get recent searches', e);
     });
   }
 
@@ -163,7 +163,7 @@ class App extends Component {
         }
         });
 
-        this.setState({storePrices: storePrices.slice(0,25)});
+        this.setState({storePrices: storePrices.slice(0,10)});
         progress = Math.min(100, this.state.progress + numStores * 100 /storeCount);
         this.setState({progress});
         if (progress === 100) {
