@@ -268,7 +268,7 @@ class App extends Component {
       <tbody>
 
       <tr style={{display: tableDisplay}}>
-      <th>Store #</th><th>Address</th><th>ZIP</th><th className="right">Price</th><th>Stock</th>
+      <th>Store #</th><th>Address</th><th>ZIP</th><th className="right">Price</th><th>Stock</th><th>PUT</th>
       </tr>
       {
         this.state.storePrices.map(storePrice =>
@@ -280,6 +280,7 @@ class App extends Component {
             <td>{storePrice.zip}</td>
             <td className="right">{formatCurrency(storePrice.price)}</td>
             <td>{storePrice.stock}</td>
+            <td>{storePrice.pickupToday? 'Yes': 'No'}</td>
           </tr>
         )
       }
