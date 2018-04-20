@@ -268,7 +268,7 @@ class App extends Component {
       <tbody>
 
       <tr style={{display: tableDisplay}}>
-      <th>Store #</th><th>Address</th><th>ZIP</th><th className="right">Price</th><th>Stock</th><th>PUT</th>
+      <th>Store #</th><th>Address</th><th>ZIP</th><th className="right">Price</th><th>Stock</th><th>Pickup Today</th>
       </tr>
       {
         this.state.storePrices.map(storePrice =>
