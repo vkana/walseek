@@ -26,12 +26,12 @@ const saveSearch = (product) => {
   axios.post(url, product).catch(e => console.log('save search failed'));
 }
 
-const getUPC = async (sku) => {
-  const apiKey = secrets.apiKey;
-  const url = `https://cors-anywhere.herokuapp.com/https://api.walmartlabs.com/v1/items/${sku}?apiKey=${apiKey}`;
-  let resp = await axios.get(url);
-  return resp.data.upc;
-};
+// const getUPC = async (sku) => {
+//   const apiKey = secrets.apiKey;
+//   const url = `https://cors-anywhere.herokuapp.com/https://api.walmartlabs.com/v1/items/${sku}?apiKey=${apiKey}`;
+//   let resp = await axios.get(url);
+//   return resp.data.upc;
+// };
 
 const getPrice = (response => {
   let priceObj = {
@@ -131,9 +131,9 @@ class App extends Component {
       allStores = await walmart.stores.byZip(zip);
     };
 
-    if (upc.length < 12) {
-      upc = await getUPC(upc);
-    }
+    // if (upc.length < 12) {
+    //   upc = await getUPC(upc);
+    // }
 
     if (!upc) {
       console.log('UPC not found');
