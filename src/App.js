@@ -125,15 +125,11 @@ class App extends Component {
   }
 
   searchStores = async (upc, zip) => {
-    let [numStores, storeCount, lowPrice, lowZip] = [100, 4683, 9999, 0];
-    //storeCount = allStores.length;
-    if (zip && zip.length === 5) {
-      allStores = await walmart.stores.byZip(zip);
-    };
-
-    // if (upc.length < 12) {
-    //   upc = await getUPC(upc);
-    // }
+    let [numStores, storeCount, lowPrice, lowZip, numResults] = [100, 4683, 9999, 0, 10];
+    if (zip) {
+      storeCount = 100;
+      numResults = 100;
+    }
 
     if (!upc) {
       console.log('UPC not found');
@@ -147,7 +143,8 @@ class App extends Component {
       axios.get(url, {
         params: {
           start: i,
-          stores: numStores
+          stores: numStores,
+          zip: zip
         }
       })
       .then(resp => {
@@ -157,19 +154,25 @@ class App extends Component {
 
         let storePrices = this.state.storePrices;
         resp.data.storePrices.map(s => {
-          if (s.price <= lowPrice){
+          if (zip || s.price <= lowPrice){
           storePrices.unshift(s);
           [lowPrice, lowZip] = [s.price, s.zip];
         }
         });
 
-        this.setState({storePrices: storePrices.slice(0,10)});
+        if (zip) {
+          storePrices = storePrices.sort((a,b) => {
+            return a.price - b.price;
+          })
+        }
+
+        this.setState({storePrices: storePrices.slice(0,numResults)});
         progress = Math.min(100, this.state.progress + numStores * 100 /storeCount);
         this.setState({progress});
         if (progress === 100) {
           let product = (({ name, sku}) => ({name, sku}))(this.state.product);
           product = {...product, price:lowPrice, zip: '00000'.concat(lowZip).slice(-5)};
-          if (product && product.sku) {
+          if (product && product.sku && !zip) {
             saveSearch(product);
           }
         }
@@ -221,11 +224,11 @@ class App extends Component {
       <div>
       <div>
       <h2>Walmart nationwide low price search</h2>
-      Enter SKU or UPC. Search may take 1-3 minutes.
+      <button onClick={this.toggleInstructions.bind(this)}>Instructions to use it with a barcode app</button>
+      <br/>
+      Enter SKU or UPC. Enter zip for local search and Pickup Today info. <br/>
       *One search at a time. No multi-tab search please!*
       <br/>
-      <button onClick={this.toggleInstructions.bind(this)}>Instructions to use it with a barcode app</button>
-
       <div style={{textAlign:"left", marginLeft: "40%", display: this.state.showInstructions?"block":"none"}}>
         It's handy when you're at a store and want to know the lowest price.
         <ul>
@@ -240,12 +243,11 @@ class App extends Component {
       </div>
       </div><br/>
       <form onSubmit={this.handleSubmit}>
-        <label>
-        SKU or UPC: <input type = "text" name="upc" value={this.state.upc} onChange={this.handleChange}/>
-        </label>
-        <label style={{display:"none"}}>
-        ZIP: <input type = "text" name="zip" value={this.state.zip} onChange={this.handleChange}/>
-        </label>
+        <label>SKU or UPC: </label>
+        <input type = "text" name="upc" value={this.state.upc} onChange={this.handleChange}/>
+        <label> ZIP: </label>
+        <input type = "text" name="zip" value={this.state.zip} onChange={this.handleChange}/>
+        <label> </label>
         <input disabled={this.state.progress > 0 && this.state.progress < 100} type="submit" value="Submit" />
       </form>
 
