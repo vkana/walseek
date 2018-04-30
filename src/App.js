@@ -14,14 +14,14 @@ let allStores = stores.allStores;
 let failedStores = [];
 
 const randomApiDomain = () => {
-  let domains = ['walseek-rest.herokuapp.com', 'walseek-rest-1.herokuapp.com', 'walseek-rest-2.herokuapp.com'];
+  let domains = ['walseek.herokuapp.com', 'walseek1.herokuapp.com', 'walseek2.herokuapp.com'];
   return domains[Math.floor(Math.random()*domains.length)];
 }
 const formatCurrency = (num) => {
   return '$' + Number.parseFloat(num).toFixed(2);
 }
 const saveSearch = (product) => {
-  let url = 'https://walseek-rest.herokuapp.com/products';
+  let url = 'https://walseek.herokuapp.com/products';
   //let url = 'http://localhost:3001/products';
   axios.post(url, product).catch(e => console.log('save search failed'));
 }
@@ -172,7 +172,7 @@ class App extends Component {
         if (progress === 100) {
           let product = (({ name, sku}) => ({name, sku}))(this.state.product);
           product = {...product, price:lowPrice, zip: '00000'.concat(lowZip).slice(-5)};
-          if (product && product.sku && !zip) {
+          if (!zip && product && product.sku) {
             saveSearch(product);
           }
         }
