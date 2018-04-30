@@ -99,7 +99,7 @@ class App extends Component {
   }
 
   searchHistory = async () => {
-    let url = 'https://walseek-rest.herokuapp.com/products?count=50';
+    let url = 'https://walseek.herokuapp.com/products?count=50';
     //let url = 'http://localhost:3001/products';
     let searches = [];
     axios.get(url).then(response => {
