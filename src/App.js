@@ -20,6 +20,12 @@ const saveSearch = (product) => {
   //let url = 'http://localhost:3001/products';
   axios.post(url, product).catch(e => console.log('save search failed'));
 }
+const getUPC = async (sku) => {
+  const url = `https://walseek-rest.herokuapp.com/upc/${sku}`;
+  let resp = await axios.get(url);
+  return resp.data.upc;
+};
+
 //===============
 class App extends Component {
   constructor() {
@@ -72,6 +78,10 @@ class App extends Component {
     if (zip) {
       storeCount = 100;
       numResults = 100;
+    }
+
+    if (upc.length < 12) {
+      upc = await getUPC(upc);
     }
 
     if (!upc) {
