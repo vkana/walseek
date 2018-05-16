@@ -181,7 +181,8 @@ class App extends Component {
       <button onClick={this.toggleInstructions.bind(this)}>Instructions to use it with a barcode app</button>
       <br/>
       Enter SKU or UPC. Enter zip for local search and Pickup Today info. <br/>
-      *One search at a time. No multi-tab search please!*
+      *One search at a time. No multi-tab search please!* <br/>
+      Issues / comments? <a target="_blank" rel="noopener noreferrer" href="https://twitter.com/walseek">@walseek</a>
       <br/>
       <div style={{textAlign:"left", marginLeft: "40%", display: this.state.showInstructions?"block":"none"}}>
         It's handy when you're at a store and want to know the lowest price.
