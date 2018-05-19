@@ -9,14 +9,14 @@ const queryString = require('query-string');
 let allStores = stores.allStores;
 
 const randomApiDomain = () => {
-  let domains = ['walseek-rest.herokuapp.com', 'walseek-rest-1.herokuapp.com', 'walseek-rest-2.herokuapp.com'];
+  let domains = ['walseek.herokuapp.com', 'walseek1.herokuapp.com', 'walseek2.herokuapp.com'];
   return domains[Math.floor(Math.random()*domains.length)];
 }
 const formatCurrency = (num) => {
   return '$' + Number.parseFloat(num).toFixed(2);
 }
 const saveSearch = (product) => {
-  let url = 'https://walseek-rest.herokuapp.com/products';
+  let url = 'https://walseek.herokuapp.com/products';
   //let url = 'http://localhost:3001/products';
   axios.post(url, product).catch(e => console.log('save search failed'));
 }
