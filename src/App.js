@@ -10,6 +10,7 @@ let allStores = stores.allStores;
 
 const randomApiDomain = () => {
   let domains = ['walseek.herokuapp.com', 'walseek1.herokuapp.com', 'walseek2.herokuapp.com'];
+  //let domains = ['a.localhost:3001', 'b.localhost:3001', 'c.localhost:3001'];
   return domains[Math.floor(Math.random()*domains.length)];
 }
 const formatCurrency = (num) => {
@@ -73,7 +74,7 @@ class App extends Component {
     this.setState({showInstructions: !this.state.showInstructions});
   }
 
-  searchStores = async (upc, zip) => {
+  searchStores = async (upc, zip, inStockOnly) => {
     let [numStores, storeCount, lowPrice, lowZip, numResults] = [100, 4683, 9999, 0, 10];
     if (zip) {
       storeCount = 100;
@@ -97,7 +98,8 @@ class App extends Component {
         params: {
           start: i,
           stores: numStores,
-          zip: zip
+          zip: zip,
+          inStockOnly: inStockOnly
         }
       })
       .then(resp => {
@@ -126,7 +128,7 @@ class App extends Component {
         if (progress === 100) {
           let product = (({ name, sku}) => ({name, sku}))(this.state.product);
           product = {...product, price:lowPrice, zip: '00000'.concat(lowZip).slice(-5)};
-          if (!zip && product && product.sku) {
+          if (!this.state.inStockOnly && !zip && product && product.sku) {
             saveSearch(product);
           }
         }
@@ -142,14 +144,15 @@ class App extends Component {
   }
 
   handleChange(event) {
-    this.setState({[event.target.name]: event.target.value});
+    let val = (event.target.name === 'inStockOnly') ? event.target.checked: event.target.value;
+    this.setState({[event.target.name]: val});
   }
 
   handleSubmit(event) {
     this.setState({progress: 1, product: {}})
     if (this.state.upc.length > 3) {
       this.setState({storePrices: []});
-      this.searchStores(this.state.upc, this.state.zip);
+      this.searchStores(this.state.upc, this.state.zip, this.state.inStockOnly);
     }
     if (event) {
       event.preventDefault();
@@ -198,11 +201,12 @@ class App extends Component {
       </div>
       </div><br/>
       <form onSubmit={this.handleSubmit}>
-        <label>SKU or UPC: </label>
+        <label>SKU / UPC: </label>
         <input type = "text" name="upc" value={this.state.upc} onChange={this.handleChange}/>
         <label> ZIP: </label>
         <input type = "text" name="zip" value={this.state.zip} onChange={this.handleChange}/>
-        <label> </label>
+        <label> In Stock Only: </label>
+        <input type = "checkbox" name="inStockOnly" defaultChecked={this.state.inStockOnly} onChange={this.handleChange}/>
         <input disabled={this.state.progress > 0 && this.state.progress < 100} type="submit" value="Submit" />
       </form>
 
