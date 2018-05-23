@@ -27,6 +27,34 @@ const getUPC = async (sku) => {
   return resp.data.upc;
 };
 
+const insertInList = (arr, elem) => {
+  let len = 0;
+  if (Array.isArray(arr)) {
+    len = arr.length;
+  }
+
+  if (len === 0) {
+    arr = [];
+    arr.push(elem);
+    return arr;
+  }
+
+  let inserted = false;
+  for (let i = 0; i < len; i++) {
+    if (elem.price <= arr[i].price) {
+      arr.splice(i, 0, elem);
+      inserted = true;
+      break;
+    }
+  }
+
+  if (!inserted) {
+    arr.splice(len, 0, elem);
+  }
+
+  return arr;
+};
+
 //===============
 class App extends Component {
   constructor() {
@@ -109,24 +137,18 @@ class App extends Component {
 
         let storePrices = this.state.storePrices;
         resp.data.storePrices.map(s => {
-          if (zip || s.price <= lowPrice){
-          storePrices.unshift(s);
-          [lowPrice, lowZip] = [s.price, s.zip];
-        }
-        return null;
+          storePrices = insertInList(storePrices, s);
+          return null;
         });
-
-        if (zip) {
-          storePrices = storePrices.sort((a,b) => {
-            return a.price - b.price;
-          })
-        }
 
         this.setState({storePrices: storePrices.slice(0,numResults)});
         progress = Math.min(100, this.state.progress + numStores * 100 /storeCount);
         this.setState({progress});
         if (progress === 100) {
           let product = (({ name, sku}) => ({name, sku}))(this.state.product);
+          if (storePrices.length > 0) {
+            [lowPrice, lowZip] = [storePrices[0].price, storePrices[0].zip];
+          }
           product = {...product, price:lowPrice, zip: '00000'.concat(lowZip).slice(-5)};
           if (!this.state.inStockOnly && !zip && product && product.sku) {
             saveSearch(product);
