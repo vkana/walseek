@@ -240,10 +240,9 @@ class App extends Component {
 
           <div style={{display:productDisplay}}>
           <div>Walmart: <a target="_blank" rel="noopener noreferrer" href={this.state.product.url}>{this.state.product.name}</a></div>
-          <div>Brickseek: <a target="_blank" rel="noopener noreferrer" href={this.state.product.bsUrl}>{this.state.product.sku}</a></div>
-          <div>UPC Barcode: <a target="_blank" rel="noopener noreferrer" href={`http://barcode.live/?upc=${this.state.product.upc}`}>{this.state.product.upc}</a></div>
-          <div>Online Price: {this.state.product.onlinePrice}</div>
-          <div>Sold: {this.state.product.offerType}</div>
+          <div>Brickseek: <a target="_blank" rel="noopener noreferrer" href={this.state.product.bsUrl}>{this.state.product.sku}</a> |
+          UPC Barcode: <a target="_blank" rel="noopener noreferrer" href={`http://barcode.live/?upc=${this.state.product.upc}`}>{this.state.product.upc}</a></div>
+          <div>Online Price: {this.state.product.onlinePrice} | Sold: {this.state.product.offerType}</div>
           </div>
 
 <br/>
