@@ -3,7 +3,7 @@ import './App.css';
 //import logo from './logo.svg';
 const axios = require('axios');
 const stores = require('./stores.json');
-let geocode = require('reverse-geocode');
+let cities = require('cities');
 
 const queryString = require('query-string');
 
@@ -170,7 +170,7 @@ class App extends Component {
 
   getLocalZip = () => {
     navigator.geolocation.getCurrentPosition(pos => {
-      let addr = geocode.lookup(pos.coords.latitude, pos.coords.longitude, 'US');
+      let addr = cities.gps_lookup(pos.coords.latitude, pos.coords.longitude);
       this.setState({userZip: addr.zipcode});
     });
   }
