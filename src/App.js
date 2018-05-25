@@ -154,7 +154,9 @@ class App extends Component {
           }
           product = {...product, price:lowPrice, zip: '00000'.concat(lowZip).slice(-5)};
           if (!this.state.inStockOnly && !zip && product && product.sku) {
-            product.userZip = this.state.userZip || null;
+            if (this.state.userZip) {
+              product.userZip = this.state.userZip;
+            }
             saveSearch(product);
           }
         }
