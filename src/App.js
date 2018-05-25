@@ -3,6 +3,7 @@ import './App.css';
 //import logo from './logo.svg';
 const axios = require('axios');
 const stores = require('./stores.json');
+let geocode = require('reverse-geocode');
 
 const queryString = require('query-string');
 
@@ -16,6 +17,7 @@ const randomApiDomain = () => {
 const formatCurrency = (num) => {
   return '$' + Number.parseFloat(num).toFixed(2);
 }
+
 const saveSearch = (product) => {
   let url = 'https://walseek.herokuapp.com/products';
   //let url = 'http://localhost:3001/products';
@@ -73,6 +75,7 @@ class App extends Component {
     this.handleSubmit = this.handleSubmit.bind(this);
     this.searchStores = this.searchStores.bind(this);
     this.searchHistory = this.searchHistory.bind(this);
+    this.getLocalZip = this.getLocalZip.bind(this);
     this.toggleInstructions = this.toggleInstructions.bind(this);
   }
 
@@ -141,7 +144,7 @@ class App extends Component {
           return null;
         });
 
-        this.setState({storePrices: storePrices.slice(0,numResults)});
+        this.setState({storePrices: storePrices.slice(0, numResults)});
         progress = Math.min(100, this.state.progress + numStores * 100 /storeCount);
         this.setState({progress});
         if (progress === 100) {
@@ -151,6 +154,7 @@ class App extends Component {
           }
           product = {...product, price:lowPrice, zip: '00000'.concat(lowZip).slice(-5)};
           if (!this.state.inStockOnly && !zip && product && product.sku) {
+            product.userZip = this.state.userZip || null;
             saveSearch(product);
           }
         }
@@ -162,7 +166,13 @@ class App extends Component {
         console.log('errored', progress, e);
       })
     }
+  }
 
+  getLocalZip = () => {
+    navigator.geolocation.getCurrentPosition(pos => {
+      let addr = geocode.lookup(pos.coords.latitude, pos.coords.longitude, 'US');
+      this.setState({userZip: addr.zipcode});
+    });
   }
 
   handleChange(event) {
@@ -182,6 +192,7 @@ class App extends Component {
   }
 
   componentDidMount() {
+    this.getLocalZip();
     //eslint-disable-next-line
     let upc = queryString.parseUrl(location.href).query.item;
 
