@@ -112,6 +112,10 @@ class App extends Component {
       numResults = 100;
     }
 
+    if (this.state.showAll) {
+      numResults = 1000;
+    }
+
     if (upc.length < 12) {
       upc = await getUPC(upc);
     }
@@ -197,6 +201,9 @@ class App extends Component {
     this.getLocalZip();
     //eslint-disable-next-line
     let upc = queryString.parseUrl(location.href).query.item;
+    //eslint-disable-next-line
+    let showAll = queryString.parseUrl(location.href).query.showall;
+    this.setState({showAll: (showAll === 'yes')});
 
     if (upc) {
       this.setState({upc: upc.slice(-12)});
