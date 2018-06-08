@@ -202,11 +202,14 @@ class App extends Component {
     //eslint-disable-next-line
     let upc = queryString.parseUrl(location.href).query.item;
     //eslint-disable-next-line
+    let zip = queryString.parseUrl(location.href).query.zip || '';
+    //eslint-disable-next-line
     let showAll = queryString.parseUrl(location.href).query.showall;
     this.setState({showAll: (showAll === 'yes')});
 
     if (upc) {
       this.setState({upc: upc.slice(-12)});
+      this.setState({zip: zip});
       setTimeout(() => {
         this.handleSubmit();
       }, 1000 / 60);
