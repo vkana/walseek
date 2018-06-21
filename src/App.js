@@ -10,7 +10,7 @@ const queryString = require('query-string');
 let allStores = stores.allStores;
 
 const randomApiDomain = () => {
-  let domains = ['walseek.herokuapp.com', 'walseek1.herokuapp.com', 'walseek2.herokuapp.com'];
+  let domains = ['walseek-rest.herokuapp.com', 'walseek-rest-1.herokuapp.com', 'walseek-rest-2.herokuapp.com'];
   //let domains = ['a.localhost:3001', 'b.localhost:3001', 'c.localhost:3001'];
   return domains[Math.floor(Math.random()*domains.length)];
 }
