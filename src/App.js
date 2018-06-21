@@ -19,12 +19,12 @@ const formatCurrency = (num) => {
 }
 
 const saveSearch = (product) => {
-  let url = 'https://walseek.herokuapp.com/products';
+  let url = 'https://walseek-rest.herokuapp.com/products';
   //let url = 'http://localhost:3001/products';
   axios.post(url, product).catch(e => console.log('save search failed'));
 }
 const getUPC = async (sku) => {
-  const url = `https://walseek.herokuapp.com/upc/${sku}`;
+  const url = `https://walseek-rest.herokuapp.com/upc/${sku}`;
   let resp = await axios.get(url);
   return resp.data.upc;
 };
@@ -80,7 +80,7 @@ class App extends Component {
   }
 
   searchHistory = async () => {
-    let url = 'https://walseek.herokuapp.com/products?count=50';
+    let url = 'https://walseek-rest.herokuapp.com/products?count=50';
     //let url = 'http://localhost:3001/products';
     let searches = [];
     axios.get(url).then(response => {
