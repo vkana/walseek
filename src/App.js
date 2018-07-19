@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import './App.css';
+const secrets = require('./secrets.json');
 //import logo from './logo.svg';
 const axios = require('axios');
 const stores = require('./stores.json');
@@ -10,7 +11,7 @@ const queryString = require('query-string');
 let allStores = stores.allStores;
 
 const randomApiDomain = () => {
-  let domains = ['walseek-rest.herokuapp.com', 'walseek-rest-1.herokuapp.com', 'walseek-rest-2.herokuapp.com'];
+  let domains = secrets.domains1;
   //let domains = ['a.localhost:3001', 'b.localhost:3001', 'c.localhost:3001'];
   return domains[Math.floor(Math.random()*domains.length)];
 }
@@ -19,12 +20,12 @@ const formatCurrency = (num) => {
 }
 
 const saveSearch = (product) => {
-  let url = 'https://walseek-rest.herokuapp.com/products';
+  let url = `https://${randomApiDomain()}/products`;
   //let url = 'http://localhost:3001/products';
   axios.post(url, product).catch(e => console.log('save search failed'));
 }
 const getUPC = async (sku) => {
-  const url = `https://walseek-rest.herokuapp.com/upc/${sku}`;
+  const url = `https://${randomApiDomain()}/upc/${sku}`;
   let resp = await axios.get(url);
   return resp.data.upc;
 };
@@ -80,7 +81,7 @@ class App extends Component {
   }
 
   searchHistory = async () => {
-    let url = 'https://walseek-rest.herokuapp.com/products?count=50';
+    let url = `https://${randomApiDomain()}/products?count=50`;
     //let url = 'http://localhost:3001/products';
     let searches = [];
     axios.get(url).then(response => {
