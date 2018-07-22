@@ -27,7 +27,7 @@ const saveSearch = (product) => {
 const getUPC = async (sku) => {
   const url = `https://${randomApiDomain()}/upc/${sku}`;
   let resp = await axios.get(url);
-  return resp.data.upc;
+  return {upc: resp.data.upc, variants: resp.data.variants};
 };
 
 const insertInList = (arr, elem) => {
@@ -118,7 +118,9 @@ class App extends Component {
     }
 
     if (upc.length < 12) {
-      upc = await getUPC(upc);
+      let resp = await getUPC(upc);
+      upc = resp.upc;
+      this.setState({variants: resp.variants});
     }
 
     if (!upc) {
@@ -141,6 +143,7 @@ class App extends Component {
       })
       .then(resp => {
         if (resp.data.item && resp.data.item.sku && !this.state.product.sku) {
+          resp.data.item.variants = this.state.variants;
           this.setState({product: resp.data.item});
         }
 
@@ -265,9 +268,10 @@ class App extends Component {
 
           <div style={{display:productDisplay}}>
           <div>Walmart: <a target="_blank" rel="noopener noreferrer" href={this.state.product.url}>{this.state.product.name}</a></div>
-          <div>Brickseek: <a target="_blank" rel="noopener noreferrer" href={this.state.product.bsUrl}>{this.state.product.sku}</a> |
-          UPC Barcode: <a target="_blank" rel="noopener noreferrer" href={`http://barcode.live/?upc=${this.state.product.upc}`}>{this.state.product.upc}</a></div>
+          <div>SKU: <a target="_blank" rel="noopener noreferrer" href={this.state.product.bsUrl}>{this.state.product.sku}</a> |
+          UPC: <a target="_blank" rel="noopener noreferrer" href={`http://barcode.live/?upc=${this.state.product.upc}`}>{this.state.product.upc}</a></div>
           <div>Online Price: {this.state.product.onlinePrice} | Sold: {this.state.product.offerType}</div>
+          <div style={{display:(this.state.product.variants)?'block':'none'}}>Variants: {this.state.product.variants}</div>
           </div>
 
 <br/>
