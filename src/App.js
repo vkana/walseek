@@ -26,7 +26,7 @@ const saveSearch = (product) => {
 }
 const getUPC = async (sku) => {
   const url = `https://${randomApiDomain()}/upc/${sku}`;
-  let resp = await axios.get(url);
+  let resp = await axios.get(url).catch(err => {return {data: {upc:0, variants:[]}}});
   return {upc: resp.data.upc, variants: resp.data.variants};
 };
 
