@@ -157,7 +157,7 @@ class App extends Component {
         progress = Math.min(100, this.state.progress + numStores * 100 /storeCount);
         this.setState({progress});
         if (progress === 100) {
-          let product = (({ name, sku}) => ({name, sku}))(this.state.product);
+          let product = (({ name, sku, upc}) => ({name, sku, upc}))(this.state.product);
           if (storePrices.length > 0) {
             [lowPrice, lowZip] = [storePrices[0].price, storePrices[0].zip];
           }
