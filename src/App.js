@@ -68,6 +68,7 @@ class App extends Component {
       storePrices: [],
       product: {},
       progress: 0,
+      statusMessage: '',
       searches: [],
       showInstructions: false
     }
@@ -125,7 +126,7 @@ class App extends Component {
 
     if (!upc) {
       console.log('UPC not found');
-      this.setState({progress: 100});
+      this.setState({progress: 100, statusMessage: 'Cannot get item details. Try later or enter UPC'});
       return;
     }
     let progress = 0;
@@ -144,6 +145,7 @@ class App extends Component {
       .then(resp => {
         if (resp.data.item && resp.data.item.sku && !this.state.product.sku) {
           resp.data.item.variants = this.state.variants;
+          resp.data.item.upc = upc;
           this.setState({product: resp.data.item});
         }
 
@@ -157,6 +159,7 @@ class App extends Component {
         progress = Math.min(100, this.state.progress + numStores * 100 /storeCount);
         this.setState({progress});
         if (progress === 100) {
+          this.setState({statusMessage: 'Done!'})
           let product = (({ name, sku, upc}) => ({name, sku, upc}))(this.state.product);
           if (storePrices.length > 0) {
             [lowPrice, lowZip] = [storePrices[0].price, storePrices[0].zip];
@@ -192,7 +195,7 @@ class App extends Component {
   }
 
   handleSubmit(event) {
-    this.setState({progress: 1, product: {}})
+    this.setState({progress: 1, statusMessage: '', product: {}})
     if (this.state.upc.length > 3) {
       this.setState({storePrices: []});
       this.searchStores(this.state.upc, this.state.zip, this.state.inStockOnly);
@@ -261,7 +264,7 @@ class App extends Component {
       </form>
 
       <div id="progressbar">
-      <div id="progress" style={{width:`${this.state.progress}%`}}>{this.state.progress >= 100 ? 'Done!': ''}</div>
+      <div id="progress" style={{width:`${this.state.progress}%`}}>{this.state.statusMessage}</div>
       </div>
       <br/>
 
