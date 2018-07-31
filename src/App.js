@@ -26,7 +26,7 @@ const saveSearch = (product) => {
 }
 const getUPC = async (sku) => {
   const url = `https://${randomApiDomain()}/upc/${sku}`;
-  let resp = await axios.get(url).catch(err => {return {data: {upc:0, variants:[]}}});
+  let resp = await axios.get(url).catch(err => {return {data: {upc:0, variants : ''}}});
   return {upc: resp.data.upc, variants: resp.data.variants};
 };
 
@@ -160,7 +160,7 @@ class App extends Component {
         this.setState({progress});
         if (progress === 100) {
           this.setState({statusMessage: 'Done!'})
-          let product = (({ name, sku, upc}) => ({name, sku, upc}))(this.state.product);
+          let product = (({ name, sku, upc, variants}) => ({name, sku, upc, variants}))(this.state.product);
           if (storePrices.length > 0) {
             [lowPrice, lowZip] = [storePrices[0].price, storePrices[0].zip];
           }
