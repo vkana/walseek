@@ -76,6 +76,7 @@ class App extends Component {
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleSearch = this.handleSearch.bind(this);
+    this.handleSearchAgain = this.handleSearchAgain.bind(this);
     this.searchStores = this.searchStores.bind(this);
     this.searchHistory = this.searchHistory.bind(this);
     this.getLocalZip = this.getLocalZip.bind(this);
@@ -202,6 +203,7 @@ class App extends Component {
 
   handleSubmit(event) {
     this.setState({progress: 1, statusMessage: '', product: {}, variants: ''});
+
     if (this.state.upc.length > 3) {
       this.setState({storePrices: []});
       this.searchStores(this.state.upc, this.state.zip, this.state.inStockOnly);
@@ -216,6 +218,16 @@ class App extends Component {
     if (event) {
       event.preventDefault();
     }
+  }
+
+  handleSearchAgain (upc, event) {
+    if (event) {
+      event.preventDefault();
+    }
+    this.setState({upc: upc.toString()});
+    setTimeout(() => {
+      this.handleSubmit();
+    }, 1000 / 60);
   }
 
   componentDidMount() {
@@ -329,9 +341,12 @@ class App extends Component {
         <tbody>
           <tr><th>SKU</th><th>Name</th><th className="right-text">Price</th><th>Address</th></tr>
           {
-            this.state.searches.map((s,idx) =>
+            this.state.searches.map((s, idx) =>
               <tr key={idx}>
-                <td width="10%"> <a target="_blank" rel="noopener noreferrer" href={`https://www.brickseek.com/walmart-inventory-checker?sku=${s.sku}`}>{s.sku}</a></td>
+                <td width="10%">
+                  <a target="_blank" rel="noopener noreferrer" href={`https://www.brickseek.com/walmart-inventory-checker?sku=${s.sku}`}>{s.sku}</a> &nbsp;
+                  <a href='#' onClick={(e) => this.handleSearchAgain(s.sku, e)}>&#x21BB;</a>
+                </td>
                 <td width="55%">
                   {s.name} &nbsp;
                   <a target="_blank" rel="noopener noreferrer" href={`https://www.walmart.com/store/${s.storeId}/search?query=${s.sku}`}>ST</a> &nbsp;
