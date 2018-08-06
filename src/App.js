@@ -75,17 +75,23 @@ class App extends Component {
 
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleSearch = this.handleSearch.bind(this);
     this.searchStores = this.searchStores.bind(this);
     this.searchHistory = this.searchHistory.bind(this);
     this.getLocalZip = this.getLocalZip.bind(this);
     this.toggleInstructions = this.toggleInstructions.bind(this);
   }
 
-  searchHistory = async () => {
-    let url = `https://${randomApiDomain()}/products?count=50`;
+  searchHistory = async (q) => {
+    let url = `https://${randomApiDomain()}/products`;
     //let url = 'http://localhost:3001/products';
     let searches = [];
-    axios.get(url).then(response => {
+    axios.get(url, {
+      params: {
+        count: 50,
+        q: q
+      }
+    }).then(response => {
       if (response && response.data) {
         searches = response.data;
       }
@@ -195,11 +201,18 @@ class App extends Component {
   }
 
   handleSubmit(event) {
-    this.setState({progress: 1, statusMessage: '', product: {}})
+    this.setState({progress: 1, statusMessage: '', product: {}, variants: ''});
     if (this.state.upc.length > 3) {
       this.setState({storePrices: []});
       this.searchStores(this.state.upc, this.state.zip, this.state.inStockOnly);
     }
+    if (event) {
+      event.preventDefault();
+    }
+  }
+
+  handleSearch(event) {
+    this.searchHistory(this.state.q);
     if (event) {
       event.preventDefault();
     }
@@ -306,6 +319,12 @@ class App extends Component {
       <br/>
       <div>
       <h3>Recent searches</h3>
+      <form onSubmit={this.handleSearch}>
+        <label>Search: </label>
+        <input type = "text" name="q" value={this.state.q||''} onChange={this.handleChange}/>
+        <input type="submit" value="Search" />
+      </form>
+      <br/>
       <table className="alternate left-text" align="center" width="95%">
         <tbody>
           <tr><th>SKU</th><th>Name</th><th className="right-text">Price</th><th>Address</th></tr>
@@ -314,8 +333,10 @@ class App extends Component {
               <tr key={idx}>
                 <td width="10%"> <a target="_blank" rel="noopener noreferrer" href={`https://www.brickseek.com/walmart-inventory-checker?sku=${s.sku}`}>{s.sku}</a></td>
                 <td width="55%">
-                  {s.name} <a target="_blank" rel="noopener noreferrer" href={`https://www.walmart.com/store/${s.storeId}/search?query=${s.sku}`}>&#8599;</a>
-                  &nbsp;<a target="_blank" rel="noopener noreferrer" href={`https://www.walmart.com/ip/${s.sku}`}>&#8594;</a>
+                  {s.name} &nbsp;
+                  <a target="_blank" rel="noopener noreferrer" href={`https://www.walmart.com/store/${s.storeId}/search?query=${s.sku}`}>ST</a> &nbsp;
+                  <a target="_blank" rel="noopener noreferrer" href={`https://www.walmart.com/ip/${s.sku}`}>WM</a> &nbsp;
+                  <span style={{display:s.upc?'inline-block':'none'}} ><a target="_blank" rel="noopener noreferrer" href={`http://barcode.live?upc=${s.upc}`}>BC</a></span>
                 </td>
                 <td width="10%" className="right-text">{formatCurrency(s.price)}</td>
                 <td width="25%">#{s.storeId}, {s.address} {s.zip}</td>
