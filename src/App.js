@@ -167,7 +167,7 @@ class App extends Component {
         this.setState({progress});
         if (progress === 100) {
           this.setState({statusMessage: 'Done!'})
-          let product = (({ name, sku, upc, variants}) => ({name, sku, upc, variants}))(this.state.product);
+          let product = (({ name, sku, upc, variants, stores}) => ({name, sku, upc, variants, stores}))(this.state.product);
           if (storePrices.length > 0) {
             [lowPrice, lowZip] = [storePrices[0].price, storePrices[0].zip];
           }
@@ -177,6 +177,9 @@ class App extends Component {
               product.userZip = this.state.userZip;
             }
             saveSearch(product);
+          }
+          else if (zip) {
+            saveSearch({sku: product.sku, stores:product.stores});
           }
         }
       })
