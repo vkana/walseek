@@ -101,7 +101,7 @@ class App extends Component {
         delete s.createdDate;
         delete s._id;
         delete s.__v;
-        return {...s, storeId: store.no, address: store.address};
+        return {...s, storeId: store?store.no:0, address: store?store.address:''};
       });
       this.setState({searches});
     })
@@ -337,7 +337,8 @@ class App extends Component {
       <form onSubmit={this.handleSearch}>
         <label>Search: </label>
         <input type = "text" name="q" value={this.state.q||''} onChange={this.handleChange}/>
-        <input type="submit" value="Search" />
+        <input type="submit" value="Search" /> <br/>
+        SKU, UPC or Name - item search.  Store# - In stock items in the store from local searches.
       </form>
       <br/>
       <table className="alternate left-text" align="center" width="95%">
