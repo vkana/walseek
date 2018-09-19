@@ -11,7 +11,7 @@ const queryString = require('query-string');
 let allStores = stores.allStores;
 
 const randomApiDomain = () => {
-  let domains = secrets.domains1;
+  let domains = secrets.domains;
   //let domains = ['a.localhost:3001', 'b.localhost:3001', 'c.localhost:3001'];
   return domains[Math.floor(Math.random()*domains.length)];
 }
