@@ -115,7 +115,7 @@ class App extends Component {
   }
 
   searchStores = async (upc, zip, inStockOnly) => {
-    let [numStores, storeCount, lowPrice, lowZip, numResults] = [300, 4683, 9999, 0, 10];
+    let [numStores, storeCount, lowPrice, lowZip, numResults] = [10, 4683, 9999, 0, 10];
     if (zip) {
       storeCount = 100;
       numResults = 100;
