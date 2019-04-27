@@ -114,7 +114,7 @@ class App extends Component {
     this.setState({showInstructions: !this.state.showInstructions});
   }
 
-  searchStores = async (upc, zip, inStockOnly) => {
+  searchStores = async (upc, zip, inStockOnly, minQty) => {
     let [numStores, storeCount, lowPrice, lowZip, numResults] = [200, 4683, 9999, 0, 10];
     if (zip) {
       storeCount = 100;
@@ -146,7 +146,8 @@ class App extends Component {
           start: i,
           stores: numStores,
           zip: zip,
-          inStockOnly: inStockOnly
+          inStockOnly: inStockOnly,
+          minqty: minQty
         }
       })
       .then(resp => {
@@ -209,7 +210,7 @@ class App extends Component {
 
     if (this.state.upc.length > 3) {
       this.setState({storePrices: []});
-      this.searchStores(this.state.upc, this.state.zip, this.state.inStockOnly);
+      this.searchStores(this.state.upc, this.state.zip, this.state.inStockOnly, this.state.minQty);
     }
     if (event) {
       event.preventDefault();
@@ -235,13 +236,14 @@ class App extends Component {
 
   componentDidMount() {
     this.getLocalZip();
-    //eslint-disable-next-line
-    let upc = queryString.parseUrl(location.href).query.item;
-    //eslint-disable-next-line
-    let zip = queryString.parseUrl(location.href).query.zip || '';
-    //eslint-disable-next-line
-    let showAll = queryString.parseUrl(location.href).query.showall;
+    let query = queryString.parseUrl(window.location.href).query;
+    let upc = query.item;
+    let zip = query.zip || '';
+    let showAll = query.showall;
     this.setState({showAll: (showAll === 'yes')});
+
+    let minQty = parseInt(query.minqty);
+    this.setState({minQty});
 
     if (upc) {
       this.setState({upc: upc.slice(-12)});
