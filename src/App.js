@@ -244,7 +244,7 @@ class App extends Component {
     this.setState({showAll: (showAll === 'yes'), minQty, zip});
 
     if (upc) {
-        upce = upc.trim().slice(-12);
+        upc = upc.trim().slice(-12);
       this.setState({upc});
       setTimeout(() => {
         this.handleSubmit();
