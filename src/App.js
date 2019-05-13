@@ -237,17 +237,15 @@ class App extends Component {
   componentDidMount() {
     this.getLocalZip();
     let query = queryString.parseUrl(window.location.href).query;
-    let upc = query.item;
+    let upc = query.item || '';
     let zip = query.zip || '';
     let showAll = query.showall;
-    this.setState({showAll: (showAll === 'yes')});
-
     let minQty = parseInt(query.minqty);
-    this.setState({minQty});
+    this.setState({showAll: (showAll === 'yes'), minQty, zip});
 
     if (upc) {
-      this.setState({upc: upc.slice(-12)});
-      this.setState({zip: zip});
+        upce = upc.trim().slice(-12);
+      this.setState({upc});
       setTimeout(() => {
         this.handleSubmit();
       }, 1000 / 60);
