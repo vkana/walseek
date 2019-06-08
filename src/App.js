@@ -173,14 +173,11 @@ class App extends Component {
             [lowPrice, lowZip] = [storePrices[0].price, storePrices[0].zip];
           }
           product = {...product, price:lowPrice, zip: '00000'.concat(lowZip).slice(-5)};
-          if (!this.state.inStockOnly && !zip && product && product.sku) {
+          if (product && product.sku) {
             if (this.state.userZip) {
               product.userZip = this.state.userZip;
             }
             saveSearch(product);
-          }
-          else if (zip) {
-            saveSearch({sku: product.sku, stores:product.stores});
           }
         }
       })
