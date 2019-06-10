@@ -177,6 +177,10 @@ class App extends Component {
             if (this.state.userZip) {
               product.userZip = this.state.userZip;
             }
+            if(zip) {
+              delete product.zip;
+              delete product.price;
+            }
             saveSearch(product);
           }
         }
