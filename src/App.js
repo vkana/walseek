@@ -16,7 +16,7 @@ const randomApiDomain = () => {
   return domains[Math.floor(Math.random()*domains.length)];
 }
 const formatCurrency = (num) => {
-  if (num === null)
+  if (typeof(num) === 'undefined')
     return '-';
   else
     return '$' + Number.parseFloat(num).toFixed(2);
