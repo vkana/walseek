@@ -16,7 +16,10 @@ const randomApiDomain = () => {
   return domains[Math.floor(Math.random()*domains.length)];
 }
 const formatCurrency = (num) => {
-  return '$' + Number.parseFloat(num).toFixed(2);
+  if (num === null)
+    return '-';
+  else
+    return '$' + Number.parseFloat(num).toFixed(2);
 }
 
 const saveSearch = (product) => {
@@ -359,7 +362,7 @@ class App extends Component {
                   <span style={{display:s.upc?'inline-block':'none'}} ><a target="_blank" rel="noopener noreferrer" href={`http://barcode.live?upc=${s.upc}`}>BC</a></span>
                 </td>
                 <td width="10%" className="right-text">{formatCurrency(s.price)}</td>
-                <td width="25%">#{s.storeId}, {s.address} {s.zip}</td>
+                <td width="25%">{s.storeId? '#' + s.storeId + ',' : '[Local Search]'} {s.address} {s.zip}</td>
               </tr>
             )
           }
