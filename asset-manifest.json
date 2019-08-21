@@ -1,6 +1,15 @@
 {
-  "main.css": "static/css/main.019ba0dd.css",
-  "main.css.map": "static/css/main.019ba0dd.css.map",
-  "main.js": "static/js/main.a8100270.js",
-  "main.js.map": "static/js/main.a8100270.js.map"
+  "files": {
+    "main.css": "/walseek/static/css/main.63df5139.chunk.css",
+    "main.js": "/walseek/static/js/main.46e68a4a.chunk.js",
+    "main.js.map": "/walseek/static/js/main.46e68a4a.chunk.js.map",
+    "runtime~main.js": "/walseek/static/js/runtime~main.994dfd8d.js",
+    "runtime~main.js.map": "/walseek/static/js/runtime~main.994dfd8d.js.map",
+    "static/js/2.599e05e4.chunk.js": "/walseek/static/js/2.599e05e4.chunk.js",
+    "static/js/2.599e05e4.chunk.js.map": "/walseek/static/js/2.599e05e4.chunk.js.map",
+    "index.html": "/walseek/index.html",
+    "precache-manifest.6ac2132022d3cc83503b32757c393cc2.js": "/walseek/precache-manifest.6ac2132022d3cc83503b32757c393cc2.js",
+    "service-worker.js": "/walseek/service-worker.js",
+    "static/css/main.63df5139.chunk.css.map": "/walseek/static/css/main.63df5139.chunk.css.map"
+  }
 }
